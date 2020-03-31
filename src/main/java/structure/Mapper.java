@@ -1,14 +1,12 @@
 package structure;
 
-import structure.arithmetic.ArithmeticalExpression;
-
 import java.util.ArrayList;
 import java.util.List;
 
 public final class Mapper implements Chainable {
-    private final ArithmeticalExpression mapper;
+    private final Polynomial mapper;
 
-    public Mapper(ArithmeticalExpression mapper) {
+    public Mapper(Polynomial mapper) {
         this.mapper = mapper;
     }
 

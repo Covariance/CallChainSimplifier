@@ -1,9 +1,8 @@
 package parser;
 
-import exceptions.ParserException;
+import exceptions.SyntaxException;
+import exceptions.TypeMismatchException;
 import structure.*;
-import structure.arithmetic.*;
-import structure.logical.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,24 +14,31 @@ public class CallChainParser {
     }
 
     private static class InnerParser extends BaseParser {
-        interface ArithmeticalBinOpsCreator {
-            AbstractBinaryOperator create(ArithmeticalExpression left, ArithmeticalExpression right);
+        interface PolynomialAction {
+            Polynomial apply(Polynomial a, Polynomial b);
         }
 
-        interface LogicalBinOpsCreator {
-            AbstractBinaryOperator create(LogicalExpression left, LogicalExpression right);
+        private final static Map<Character, PolynomialAction> POLY_ACTION = Map.of(
+                '+', Polynomial::add,
+                '-', Polynomial::subtract,
+                '*', Polynomial::multiply
+        );
+
+        interface ComparativeExpressionCreator {
+            ComparativeExpression create(Polynomial a);
         }
 
-        private final static Map<Character, ArithmeticalBinOpsCreator> ARITHMETICAL_BIN_OPS = Map.of(
-                '+', Add::new,
-                '-', Subtract::new,
-                '*', Multiply::new,
+        private final static Map<Character, ComparativeExpressionCreator> COMP_EXPR = Map.of(
                 '<', Less::new,
                 '>', Greater::new,
                 '=', Equals::new
         );
 
-        private final static Map<Character, LogicalBinOpsCreator> LOGICAL_BIN_OPS = Map.of(
+        interface LogicalExpressionCreator {
+            LogicalExpression create(BooleanExpression left, BooleanExpression right);
+        }
+
+        private final static Map<Character, LogicalExpressionCreator> LOGIC_EXPR = Map.of(
                 '&', And::new,
                 '|', Or::new
         );
@@ -76,7 +82,7 @@ public class CallChainParser {
             }
             nextChar();
             if (ch != '\0') {
-                throw new ParserException("CallChain parsed, but there's something else in the source"); //fixme
+                throw new SyntaxException("Non-empty tail after parsing call chain");
             }
             return new CallChain(result);
         }
@@ -88,10 +94,10 @@ public class CallChainParser {
             expect('(');
             Expression result = parseExpression();
             expect(')');
-            if (result.isArithmetical()) {
-                throw new ParserException("Type mismatch: expected logical, got: " + result.toString());
+            if (result.isPolynomial()) {
+                throw new TypeMismatchException("logical", result.toString());
             }
-            return new Filter((LogicalExpression) result);
+            return new Filter((BooleanExpression) result);
         }
 
         /*
@@ -104,10 +110,10 @@ public class CallChainParser {
             expect('(');
             Expression result = parseExpression();
             expect(')');
-            if (!result.isArithmetical()) {
-                throw new ParserException("Type mismatch: expected arithmetical, got:" + result.toString());
+            if (!result.isPolynomial()) {
+                throw new TypeMismatchException("arithmetical", result.toString());
             }
-            return new Mapper((ArithmeticalExpression) result);
+            return new Mapper((Polynomial) result);
         }
 
         /*
@@ -123,6 +129,10 @@ public class CallChainParser {
         }
 
 
+        private TypeMismatchException typeError(String expected, Expression left, Expression right) {
+            return new TypeMismatchException(expected, left.toString() + " and " + right.toString());
+        }
+
         /*
          *  <binary-expression> ::= "(" <expression> <operation> <expression> ")"
          */
@@ -131,30 +141,36 @@ public class CallChainParser {
             Character op = ch;
             nextChar();
             Expression right = parseExpressionWrapper();
-            if (ARITHMETICAL_BIN_OPS.containsKey(op)) {
-                if (!left.isArithmetical() || !right.isArithmetical()) {
-                    throw new ParserException("Type mismatch: expected logical, got: " + left + " and " + right); //fixme
+            if (POLY_ACTION.containsKey(op)) {
+                if (!left.isPolynomial() || !right.isPolynomial()) {
+                    throw typeError("polynomial", left, right);
                 }
-                return ARITHMETICAL_BIN_OPS.get(op).create((ArithmeticalExpression) left, (ArithmeticalExpression) right);
-            } else if (LOGICAL_BIN_OPS.containsKey(op)) {
-                if (left.isArithmetical() || right.isArithmetical()) {
-                    throw new ParserException("Type mismatch: expected logical, got: " + left + " and " + right); //fixme
-                }
-                return LOGICAL_BIN_OPS.get(op).create((LogicalExpression) left, (LogicalExpression) right);
-            } else {
-                throw new ParserException("Unknown binary operator: " + op); //fixme
+                return POLY_ACTION.get(op).apply((Polynomial) left, (Polynomial) right);
             }
+            if (COMP_EXPR.containsKey(op)) {
+                if (!left.isPolynomial() || !right.isPolynomial()) {
+                    throw typeError("polynomial", left, right);
+                }
+                return COMP_EXPR.get(op).create(Polynomial.subtract((Polynomial) left, (Polynomial) right));
+            }
+            if (LOGIC_EXPR.containsKey(op)) {
+                if (left.isPolynomial() || right.isPolynomial()) {
+                    throw typeError("logical", left, right);
+                }
+                return LOGIC_EXPR.get(op).create((BooleanExpression) left, (BooleanExpression) right);
+            }
+            throw new SyntaxException("Unknown operation symbol: " + op);
         }
 
         /*
          *  <number> | "element"
          */
-        private ArithmeticalExpression parsePrimal() {
+        private Polynomial parsePrimal() {
             if (test('e')) {
                 expect("lement");
-                return new Variable();
+                return new Polynomial(1, 1);
             }
-            return new Const(parseConstant());
+            return new Polynomial(parseConstant(), 0);
         }
 
         /*
@@ -166,7 +182,7 @@ public class CallChainParser {
             if (test('-')) {
                 result.append('-');
             }
-            while (between('0', '9')) {
+            while (between()) {
                 result.append(ch);
                 nextChar();
             }

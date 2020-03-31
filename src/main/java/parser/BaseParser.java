@@ -45,7 +45,7 @@ public class BaseParser {
         return source.error(message);
     }
 
-    protected boolean between(final char from, final char to) {
-        return from <= ch && ch <= to;
+    protected boolean between() {
+        return '0' <= ch && ch <= '9';
     }
 }
