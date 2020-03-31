@@ -2,8 +2,8 @@ package structure.arithmetic;
 
 import structure.AbstractBinaryOperator;
 
-public final class Multiply extends AbstractBinaryOperator implements ArithmeticExpression {
-    public Multiply(ArithmeticExpression left, ArithmeticExpression right) {
+public final class Multiply extends AbstractBinaryOperator implements ArithmeticalExpression {
+    public Multiply(ArithmeticalExpression left, ArithmeticalExpression right) {
         super(left, right);
     }
 

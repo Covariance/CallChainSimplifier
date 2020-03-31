@@ -1,11 +1,10 @@
 package structure.logical;
 
 import structure.AbstractBinaryOperator;
-import structure.Expression;
-import structure.arithmetic.ArithmeticExpression;
+import structure.arithmetic.ArithmeticalExpression;
 
 public final class Equals extends AbstractBinaryOperator implements LogicalExpression {
-    public Equals(ArithmeticExpression left, ArithmeticExpression right) {
+    public Equals(ArithmeticalExpression left, ArithmeticalExpression right) {
         super(left, right);
     }
 

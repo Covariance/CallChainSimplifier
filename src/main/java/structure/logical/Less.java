@@ -1,11 +1,10 @@
 package structure.logical;
 
 import structure.AbstractBinaryOperator;
-import structure.Expression;
-import structure.arithmetic.ArithmeticExpression;
+import structure.arithmetic.ArithmeticalExpression;
 
 public final class Less extends AbstractBinaryOperator implements LogicalExpression {
-    public Less(ArithmeticExpression left, ArithmeticExpression right) {
+    public Less(ArithmeticalExpression left, ArithmeticalExpression right) {
         super(left, right);
     }
 

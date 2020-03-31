@@ -35,6 +35,12 @@ public class BaseParser {
         }
     }
 
+    protected void skipWhitespace() {
+        while (ch == ' ' || ch == '\t' || ch == '\n' || ch == '\r') {
+            nextChar();
+        }
+    }
+
     protected ParserException error(final String message) {
         return source.error(message);
     }

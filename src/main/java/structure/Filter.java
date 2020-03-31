@@ -22,4 +22,9 @@ public final class Filter implements Chainable {
         }
         return result;
     }
+
+    @Override
+    public String toString() {
+        return "filter{" + filter.toString() + "}";
+    }
 }

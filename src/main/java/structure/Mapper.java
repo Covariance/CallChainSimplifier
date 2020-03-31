@@ -1,14 +1,14 @@
 package structure;
 
-import structure.arithmetic.ArithmeticExpression;
+import structure.arithmetic.ArithmeticalExpression;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public final class Map implements Chainable {
-    private final ArithmeticExpression mapper;
+public final class Mapper implements Chainable {
+    private final ArithmeticalExpression mapper;
 
-    public Map(ArithmeticExpression mapper) {
+    public Mapper(ArithmeticalExpression mapper) {
         this.mapper = mapper;
     }
 
@@ -19,5 +19,10 @@ public final class Map implements Chainable {
             result.add(mapper.evaluate(a));
         }
         return result;
+    }
+
+    @Override
+    public String toString() {
+        return "map{" + mapper.toString() + "}";
     }
 }

@@ -16,4 +16,18 @@ public final class CallChain implements Chainable {
         }
         return array;
     }
+
+    @Override
+    public String toString() {
+        int x = chain.size();
+        if (x == 0) {
+            return "";
+        }
+        StringBuilder result = new StringBuilder();
+        result.append(chain.get(0).toString());
+        for (int i = 1; i < x; i++) {
+            result.append("%>%").append(chain.get(i).toString());
+        }
+        return result.toString();
+    }
 }
