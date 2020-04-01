@@ -10,6 +10,10 @@ public final class Filter implements Chainable {
         this.filter = filter;
     }
 
+    public BooleanExpression getFilter() {
+        return filter;
+    }
+
     @Override
     public List<Integer> apply(List<Integer> array) {
         List<Integer> result = new ArrayList<>();
@@ -19,6 +23,11 @@ public final class Filter implements Chainable {
             }
         }
         return result;
+    }
+
+    @Override
+    public void compose(Polynomial poly) {
+        filter.compose(poly);
     }
 
     @Override

@@ -10,6 +10,10 @@ public final class Mapper implements Chainable {
         this.mapper = mapper;
     }
 
+    public Polynomial getMapper() {
+        return mapper;
+    }
+
     @Override
     public List<Integer> apply(List<Integer> array) {
         List<Integer> result = new ArrayList<>();
@@ -17,6 +21,11 @@ public final class Mapper implements Chainable {
             result.add(mapper.evaluate(a));
         }
         return result;
+    }
+
+    @Override
+    public void compose(Polynomial poly) {
+        mapper.compose(poly);
     }
 
     @Override

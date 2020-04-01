@@ -97,9 +97,4 @@ public final class Polynomial implements Expression {
         result.append(k[degree]).append(")".repeat(2 * degree));
         return result.toString();
     }
-
-    @Override
-    public boolean isPolynomial() {
-        return true;
-    }
 }

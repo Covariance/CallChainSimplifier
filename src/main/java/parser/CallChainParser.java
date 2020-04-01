@@ -94,7 +94,7 @@ public class CallChainParser {
             expect('(');
             Expression result = parseExpression();
             expect(')');
-            if (result.isPolynomial()) {
+            if (result instanceof Polynomial) {
                 throw new TypeMismatchException("logical", result.toString());
             }
             return new Filter((BooleanExpression) result);
@@ -110,7 +110,7 @@ public class CallChainParser {
             expect('(');
             Expression result = parseExpression();
             expect(')');
-            if (!result.isPolynomial()) {
+            if (!(result instanceof Polynomial)) {
                 throw new TypeMismatchException("arithmetical", result.toString());
             }
             return new Mapper((Polynomial) result);
@@ -142,19 +142,19 @@ public class CallChainParser {
             nextChar();
             Expression right = parseExpressionWrapper();
             if (POLY_ACTION.containsKey(op)) {
-                if (!left.isPolynomial() || !right.isPolynomial()) {
+                if (!(left instanceof Polynomial) || !(right instanceof Polynomial)) {
                     throw typeError("polynomial", left, right);
                 }
                 return POLY_ACTION.get(op).apply((Polynomial) left, (Polynomial) right);
             }
             if (COMP_EXPR.containsKey(op)) {
-                if (!left.isPolynomial() || !right.isPolynomial()) {
+                if (!(left instanceof Polynomial) || !(right instanceof Polynomial)) {
                     throw typeError("polynomial", left, right);
                 }
                 return COMP_EXPR.get(op).create(Polynomial.subtract((Polynomial) left, (Polynomial) right));
             }
             if (LOGIC_EXPR.containsKey(op)) {
-                if (left.isPolynomial() || right.isPolynomial()) {
+                if (left instanceof Polynomial || right instanceof Polynomial) {
                     throw typeError("logical", left, right);
                 }
                 return LOGIC_EXPR.get(op).create((BooleanExpression) left, (BooleanExpression) right);
