@@ -13,36 +13,36 @@ public class CallChainParser {
         return new InnerParser(new StringSource(source)).parseChain();
     }
 
+    public interface PolynomialAction {
+        Polynomial apply(Polynomial a, Polynomial b);
+    }
+
+    public final static Map<Character, PolynomialAction> POLY_ACTION = Map.of(
+            '+', Polynomial::add,
+            '-', Polynomial::subtract,
+            '*', Polynomial::multiply
+    );
+
+    public interface ComparativeExpressionCreator {
+        ComparativeExpression create(Polynomial a);
+    }
+
+    public final static Map<Character, ComparativeExpressionCreator> COMP_EXPR = Map.of(
+            '<', Less::new,
+            '>', Greater::new,
+            '=', Equals::new
+    );
+
+    public interface LogicalExpressionCreator {
+        LogicalExpression create(BooleanExpression left, BooleanExpression right);
+    }
+
+    public final static Map<Character, LogicalExpressionCreator> LOGIC_EXPR = Map.of(
+            '&', And::new,
+            '|', Or::new
+    );
+
     private static class InnerParser extends BaseParser {
-        interface PolynomialAction {
-            Polynomial apply(Polynomial a, Polynomial b);
-        }
-
-        private final static Map<Character, PolynomialAction> POLY_ACTION = Map.of(
-                '+', Polynomial::add,
-                '-', Polynomial::subtract,
-                '*', Polynomial::multiply
-        );
-
-        interface ComparativeExpressionCreator {
-            ComparativeExpression create(Polynomial a);
-        }
-
-        private final static Map<Character, ComparativeExpressionCreator> COMP_EXPR = Map.of(
-                '<', Less::new,
-                '>', Greater::new,
-                '=', Equals::new
-        );
-
-        interface LogicalExpressionCreator {
-            LogicalExpression create(BooleanExpression left, BooleanExpression right);
-        }
-
-        private final static Map<Character, LogicalExpressionCreator> LOGIC_EXPR = Map.of(
-                '&', And::new,
-                '|', Or::new
-        );
-
         protected InnerParser(final StringSource source) {
             super(source);
             nextChar();
