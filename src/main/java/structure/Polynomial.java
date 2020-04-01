@@ -63,13 +63,15 @@ public final class Polynomial implements Expression {
         return poly;
     }
 
-    public static Polynomial compose(Polynomial outer, Polynomial inner) {
+    public void compose(Polynomial inner) {
         Polynomial poly = new Polynomial(0, 0);
-        for (int i = outer.degree; i >= 0; i--) {
-            Polynomial term = new Polynomial(outer.k[i], 0);
+        for (int i = this.degree; i >= 0; i--) {
+            Polynomial term = new Polynomial(this.k[i], 0);
             poly = add(term, multiply(inner, poly));
         }
-        return poly;
+        poly.reduce();
+        this.k = poly.k;
+        this.degree = poly.degree;
     }
 
     public int evaluate(int x) {

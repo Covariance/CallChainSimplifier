@@ -11,6 +11,12 @@ public abstract class LogicalExpression implements BooleanExpression {
     abstract protected String getSign();
 
     @Override
+    public void compose(Polynomial poly) {
+        left.compose(poly);
+        right.compose(poly);
+    }
+
+    @Override
     public String toString() {
         return "(" + left.toString() + getSign() + right.toString() + ")";
     }
