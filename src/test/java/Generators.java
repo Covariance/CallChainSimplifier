@@ -2,6 +2,7 @@ import parser.CallChainParser;
 import structure.*;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class Generators {
     public static Polynomial generatePolynomial(int degree, Random rand) {
@@ -42,6 +43,18 @@ public class Generators {
         return q.peek();
     }
 
+
+    private final static List<Filter> SIMPLE_FILTERS = List.of(
+            new Filter(new Less(new Polynomial(1, 1))), // element < 0
+            new Filter(new Greater(new Polynomial(1, 1))), // element > 0
+            new Filter(new Equals(new Polynomial())), // 0 = 0
+            new Filter(new Or(new Less(new Polynomial(1, 1)), new Greater(new Polynomial(1, 1)))) // element != 0
+    );
+
+    private static Filter generateSimpleFilter(Random rand) {
+        return SIMPLE_FILTERS.get(rand.nextInt(SIMPLE_FILTERS.size()));
+    }
+
     public static CallChain generateCallChain(int length, int depth, int degree, Random rand) {
         List<Chainable> result = new ArrayList<>();
         for (int i = 0; i < length; i++) {
@@ -52,5 +65,21 @@ public class Generators {
             }
         }
         return new CallChain(result);
+    }
+
+    public static CallChain generateSimpleCallChain(int length, int degree, Random rand) {
+        List<Chainable> result = new ArrayList<>();
+        for (int i = 0; i < length; i++) {
+            if ((rand.nextInt() & 1) == 0) {
+                result.add(new Mapper(generatePolynomial(degree, rand)));
+            } else {
+                result.add(generateSimpleFilter(rand));
+            }
+        }
+        return new CallChain(result);
+    }
+
+    public static List<Integer> generateIntList(int length, Random rand) {
+        return rand.ints().limit(length).boxed().collect(Collectors.toList());
     }
 }
