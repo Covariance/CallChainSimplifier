@@ -2,10 +2,11 @@ package structure;
 
 import java.util.ArrayDeque;
 import java.util.List;
+import java.util.Map;
 import java.util.Queue;
 
 public final class CallChain {
-    private final List<Chainable> chain;
+    private List<Chainable> chain;
 
     public CallChain(List<Chainable> chain) {
         this.chain = chain;
@@ -18,7 +19,7 @@ public final class CallChain {
         return array;
     }
 
-    public CallChain reduce() {
+    private List<Chainable> reduce() {
         Polynomial current = new Polynomial(1, 1);
         Queue<BooleanExpression> queueOfFilters = new ArrayDeque<>();
         for (Chainable element : chain) {
@@ -40,7 +41,15 @@ public final class CallChain {
             finalFilter = new Filter(queueOfFilters.peek());
         }
         Mapper finalMapper = new Mapper(current);
-        return new CallChain(List.of(finalFilter, finalMapper));
+        return List.of(finalFilter, finalMapper);
+    }
+
+    public void simplify() {
+        this.chain = reduce();
+    }
+
+    public boolean isSimple() {
+        return chain.size() == 2 && chain.get(0) instanceof Filter && chain.get(1) instanceof Mapper;
     }
 
     @Override

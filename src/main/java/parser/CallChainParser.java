@@ -1,5 +1,6 @@
 package parser;
 
+import exceptions.ParserException;
 import exceptions.SyntaxException;
 import exceptions.TypeMismatchException;
 import structure.*;
@@ -42,10 +43,38 @@ public class CallChainParser {
             '|', Or::new
     );
 
-    private static class InnerParser extends BaseParser {
+    private static class InnerParser {
+        private final StringSource source;
+        private char ch;
+
         protected InnerParser(final StringSource source) {
-            super(source);
+            this.source = source;
             nextChar();
+        }
+
+        protected void nextChar() {
+            ch = source.hasNext() ? source.next() : '\0';
+        }
+
+        protected boolean test(char expected) {
+            if (ch == expected) {
+                nextChar();
+                return true;
+            }
+            return false;
+        }
+
+        protected void expect(final char c) {
+            if (ch != c) {
+                throw new SyntaxException("Expected '" + c + "', found '" + ch + "'");
+            }
+            nextChar();
+        }
+
+        protected void expect(final String value) {
+            for (char c : value.toCharArray()) {
+                expect(c);
+            }
         }
 
         private boolean callChainEndCheck() {
@@ -91,6 +120,10 @@ public class CallChainParser {
          *  "filter{" <expression> "}"
          */
         private Filter parseFilter() {
+            if (ch != '(') {
+                parsePrimal();
+                throw new TypeMismatchException("logical", "arithmetical");
+            }
             expect('(');
             Expression result = parseExpression();
             expect(')');
@@ -182,7 +215,7 @@ public class CallChainParser {
             if (test('-')) {
                 result.append('-');
             }
-            while (between()) {
+            while ('0' <= ch && ch <= '9') {
                 result.append(ch);
                 nextChar();
             }

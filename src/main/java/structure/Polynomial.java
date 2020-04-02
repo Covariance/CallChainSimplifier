@@ -29,38 +29,38 @@ public final class Polynomial implements Expression {
     }
 
     public static Polynomial add(Polynomial a, Polynomial b) {
-        Polynomial poly = new Polynomial(0, Math.max(a.degree, b.degree));
+        Polynomial result = new Polynomial(0, Math.max(Math.max(a.degree, b.degree), 0));
         for (int i = 0; i <= a.degree; i++) {
-            poly.k[i] += a.k[i];
+            result.k[i] += a.k[i];
         }
         for (int i = 0; i <= b.degree; i++) {
-            poly.k[i] += b.k[i];
+            result.k[i] += b.k[i];
         }
-        poly.reduce();
-        return poly;
+        result.reduce();
+        return result;
     }
 
     public static Polynomial subtract(Polynomial a, Polynomial b) {
-        Polynomial poly = new Polynomial(0, Math.max(a.degree, b.degree));
+        Polynomial result = new Polynomial(0, Math.max(Math.max(a.degree, b.degree), 0));
         for (int i = 0; i <= a.degree; i++) {
-            poly.k[i] += a.k[i];
+            result.k[i] += a.k[i];
         }
         for (int i = 0; i <= b.degree; i++) {
-            poly.k[i] -= b.k[i];
+            result.k[i] -= b.k[i];
         }
-        poly.reduce();
-        return poly;
+        result.reduce();
+        return result;
     }
 
     public static Polynomial multiply(Polynomial a, Polynomial b) {
-        Polynomial poly = new Polynomial(0, a.degree + b.degree);
+        Polynomial result = new Polynomial(0, Math.max(a.degree + b.degree, 0));
         for (int i = 0; i <= a.degree; i++) {
             for (int j = 0; j <= b.degree; j++) {
-                poly.k[i + j] += (a.k[i] * b.k[j]);
+                result.k[i + j] += a.k[i] * b.k[j];
             }
         }
-        poly.reduce();
-        return poly;
+        result.reduce();
+        return result;
     }
 
     public void compose(Polynomial inner) {
@@ -69,9 +69,9 @@ public final class Polynomial implements Expression {
             Polynomial term = new Polynomial(this.k[i], 0);
             poly = add(term, multiply(inner, poly));
         }
-        poly.reduce();
         this.k = poly.k;
         this.degree = poly.degree;
+        reduce();
     }
 
     public int evaluate(int x) {
