@@ -1,6 +1,5 @@
 package parser;
 
-import exceptions.ParserException;
 import exceptions.SyntaxException;
 import exceptions.TypeMismatchException;
 import structure.*;
@@ -88,7 +87,7 @@ public class CallChainParser {
         /*
          *  <call> | <call> “%>%” <call-chain>
          */
-        public CallChain parseChain() {
+        private CallChain parseChain() {
             List<Chainable> result = new ArrayList<>();
             while (true) {
                 if (test('f')) {
