@@ -28,7 +28,7 @@ public class ParserTests {
                     try {
                         parser.parse(test);
                         Assert.fail();
-                    } catch (SyntaxException | NumberFormatException ignored) {}
+                    } catch (SyntaxException ignored) {}
                 }
             }
         }
