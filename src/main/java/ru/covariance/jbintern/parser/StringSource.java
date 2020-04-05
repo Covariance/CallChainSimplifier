@@ -1,4 +1,4 @@
-package parser;
+package ru.covariance.jbintern.parser;
 
 public class StringSource {
     private final String data;

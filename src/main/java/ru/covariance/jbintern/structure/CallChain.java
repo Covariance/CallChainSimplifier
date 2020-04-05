@@ -1,8 +1,7 @@
-package structure;
+package ru.covariance.jbintern.structure;
 
 import java.util.ArrayDeque;
 import java.util.List;
-import java.util.Map;
 import java.util.Queue;
 
 public final class CallChain {
@@ -52,17 +51,29 @@ public final class CallChain {
         return chain.size() == 2 && chain.get(0) instanceof Filter && chain.get(1) instanceof Mapper;
     }
 
-    @Override
-    public String toString() {
+    private interface ChainableStringer {
+        String getString(Chainable call);
+    }
+
+    private String getStringFromMethod(ChainableStringer method) {
         int x = chain.size();
         if (x == 0) {
             return "";
         }
         StringBuilder result = new StringBuilder();
-        result.append(chain.get(0).toString());
+        result.append(method.getString(chain.get(0)));
         for (int i = 1; i < x; i++) {
-            result.append("%>%").append(chain.get(i).toString());
+            result.append("%>%").append(method.getString(chain.get(i)));
         }
         return result.toString();
+    }
+
+    public String toMiniString() {
+        return getStringFromMethod(Chainable::toMiniString);
+    }
+
+    @Override
+    public String toString() {
+        return getStringFromMethod(Chainable::toString);
     }
 }

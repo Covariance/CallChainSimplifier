@@ -1,4 +1,4 @@
-package structure;
+package ru.covariance.jbintern.structure;
 
 public abstract class LogicalExpression implements BooleanExpression {
     protected BooleanExpression left, right;

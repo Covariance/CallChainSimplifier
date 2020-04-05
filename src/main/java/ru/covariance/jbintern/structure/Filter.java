@@ -1,4 +1,4 @@
-package structure;
+package ru.covariance.jbintern.structure;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,6 +28,11 @@ public final class Filter implements Chainable {
     @Override
     public void compose(Polynomial poly) {
         filter.compose(poly);
+    }
+
+    @Override
+    public String toMiniString() {
+        return toString();
     }
 
     @Override

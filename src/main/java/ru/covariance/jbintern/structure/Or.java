@@ -1,4 +1,4 @@
-package structure;
+package ru.covariance.jbintern.structure;
 
 public final class Or extends LogicalExpression {
     public Or(BooleanExpression left, BooleanExpression right) {

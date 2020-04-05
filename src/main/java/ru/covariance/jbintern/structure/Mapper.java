@@ -1,4 +1,4 @@
-package structure;
+package ru.covariance.jbintern.structure;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,6 +26,11 @@ public final class Mapper implements Chainable {
     @Override
     public void compose(Polynomial poly) {
         mapper.compose(poly);
+    }
+
+    @Override
+    public String toMiniString() {
+        return "map{" + mapper.toMiniString() + "}";
     }
 
     @Override

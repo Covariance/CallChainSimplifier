@@ -1,8 +1,8 @@
-package parser;
+package ru.covariance.jbintern.parser;
 
-import exceptions.SyntaxException;
-import exceptions.TypeMismatchException;
-import structure.*;
+import ru.covariance.jbintern.exceptions.SyntaxException;
+import ru.covariance.jbintern.exceptions.TypeMismatchException;
+import ru.covariance.jbintern.structure.*;
 
 import java.util.ArrayList;
 import java.util.List;

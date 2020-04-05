@@ -1,4 +1,4 @@
-package structure;
+package ru.covariance.jbintern.structure;
 
 public final class Less extends ComparativeExpression {
     public Less(Polynomial left) {

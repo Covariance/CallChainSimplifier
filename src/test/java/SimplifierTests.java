@@ -1,7 +1,9 @@
 import org.junit.Assert;
 import org.junit.Test;
-import parser.CallChainParser;
-import structure.CallChain;
+import ru.covariance.jbintern.exceptions.SyntaxException;
+import ru.covariance.jbintern.parser.CallChainParser;
+import ru.covariance.jbintern.structure.CallChain;
+import ru.covariance.jbintern.structure.Polynomial;
 
 import java.util.List;
 import java.util.Random;
@@ -30,6 +32,23 @@ public class SimplifierTests {
                     answer.apply(TEST_CASES.get(i)),
                     sample.apply(TEST_CASES.get(i))
             );
+        }
+    }
+
+    @Test
+    public void toMiniStringTests() {
+        Random rand = new Random();
+        CallChainParser parser = new CallChainParser();
+        for (int i = 0; i < 10_000; i++) {
+            Polynomial original = Generators.generatePolynomial(i / 10, rand);
+            try {
+                CallChain test = parser.parse("map{" + original.toMiniString() + "}");
+                CallChain proof = parser.parse("map{" + original.toString() + "}");
+                List<Integer> sample = Generators.generateIntList(1000, rand);
+                Assert.assertEquals(proof.apply(sample), test.apply(sample));
+            } catch (SyntaxException e) {
+                Assert.fail();
+            }
         }
     }
 

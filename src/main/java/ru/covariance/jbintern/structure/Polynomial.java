@@ -1,4 +1,6 @@
-package structure;
+package ru.covariance.jbintern.structure;
+
+import java.util.stream.IntStream;
 
 public final class Polynomial implements Expression {
     private int[] k;   // coefficients p(x) = sum { coef[i] * x^i }
@@ -80,6 +82,38 @@ public final class Polynomial implements Expression {
             p = k[i] + (x * p);
         }
         return p;
+    }
+
+    public String toMiniString() { // TODO
+        reduce();
+        if (degree == -1) {
+            return "0";
+        }
+        if (degree == 0) {
+            return Integer.toString(k[0]);
+        }
+        if (degree == 1 && k[0] == 0 && k[1] == 1) {
+            return "element";
+        }
+        int cntOfClosing = 0;
+        StringBuilder result = new StringBuilder();
+        for (int i = 0; i < degree; i++) {
+            if (k[i] != 0) {
+                cntOfClosing++;
+                result.append('(').append(k[i]).append('+');
+            }
+            if (i != degree - 1) {
+                result.append("(element").append('*');
+            }
+        }
+        if (k[degree] != 1) {
+            result.append("(element").append('*').append(k[degree]);
+        } else {
+            result.append("element");
+            cntOfClosing--;
+        }
+        result.append(")".repeat(degree + cntOfClosing));
+        return result.toString();
     }
 
     @Override

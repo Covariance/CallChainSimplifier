@@ -1,4 +1,4 @@
-package exceptions;
+package ru.covariance.jbintern.exceptions;
 
 public class SyntaxException extends ParserException {
     public SyntaxException(String message) {

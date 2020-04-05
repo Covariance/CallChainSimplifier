@@ -1,4 +1,4 @@
-package structure;
+package ru.covariance.jbintern.structure;
 
 public final class Equals extends ComparativeExpression {
     public Equals(Polynomial left) {

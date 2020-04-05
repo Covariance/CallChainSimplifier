@@ -1,7 +1,9 @@
-import exceptions.SyntaxException;
-import exceptions.TypeMismatchException;
-import parser.CallChainParser;
-import structure.CallChain;
+package ru.covariance.jbintern;
+
+import ru.covariance.jbintern.exceptions.SyntaxException;
+import ru.covariance.jbintern.exceptions.TypeMismatchException;
+import ru.covariance.jbintern.parser.CallChainParser;
+import ru.covariance.jbintern.structure.CallChain;
 
 import java.util.Scanner;
 
@@ -11,7 +13,7 @@ public class Main {
         try {
             CallChain callChain = new CallChainParser().parse(scan.nextLine());
             callChain.simplify();
-            System.out.println(callChain);
+            System.out.println(callChain.toMiniString());
         } catch (SyntaxException | NumberFormatException e) {
             System.out.println("SYNTAX ERROR");
         } catch (TypeMismatchException e) {

@@ -1,5 +1,5 @@
-import parser.CallChainParser;
-import structure.*;
+import ru.covariance.jbintern.parser.CallChainParser;
+import ru.covariance.jbintern.structure.*;
 
 import java.util.*;
 import java.util.stream.Collectors;

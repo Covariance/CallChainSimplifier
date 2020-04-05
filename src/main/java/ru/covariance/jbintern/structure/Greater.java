@@ -1,4 +1,4 @@
-package structure;
+package ru.covariance.jbintern.structure;
 
 public final class Greater extends ComparativeExpression {
     public Greater(Polynomial left) {
