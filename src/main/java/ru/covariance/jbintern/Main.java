@@ -14,7 +14,7 @@ public class Main {
             CallChain callChain = new CallChainParser().parse(scan.nextLine());
             callChain.simplify();
             System.out.println(callChain.toMiniString());
-        } catch (SyntaxException | NumberFormatException e) {
+        } catch (SyntaxException e) {
             System.out.println("SYNTAX ERROR");
         } catch (TypeMismatchException e) {
             System.out.println("TYPE ERROR");

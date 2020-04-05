@@ -1,5 +1,6 @@
 package ru.covariance.jbintern.parser;
 
+import ru.covariance.jbintern.exceptions.ParserException;
 import ru.covariance.jbintern.exceptions.SyntaxException;
 import ru.covariance.jbintern.exceptions.TypeMismatchException;
 import ru.covariance.jbintern.structure.*;
@@ -8,35 +9,93 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Object that parses expressions according to given grammar:
+ * <digit>   ::= “0” | “1" | “2” | “3" | “4” | “5" | “6” | “7" | “8” | “9"
+ * <number> ::= <digit> | <digit> <number>
+ * <operation> ::= “+” | “-” | “*” | “>” | “<” | “=” | “&” | “|”
+ * <constant-expression> ::= “-” <number> | <number>
+ * <binary-expression> ::= “(” <expression> <operation> <expression> “)”
+ * <expression> ::= “element” | <constant-expression> | <binary-expression>
+ * <map-call> ::= “map{” <expression> “}”
+ * <filter-call> ::= “filter{” <expression> “}”
+ * <call> ::= <map-call> | <filter-call>
+ * <call-chain> ::= <call> | <call> “%>%” <call-chain>
+ */
 public class CallChainParser {
-    public CallChain parse(final String source) {
-        return new InnerParser(new StringSource(source)).parseChain();
+    /**
+     * Parses given expression into CallChain
+     * @param source source to parse
+     * @return CallChain corresponding to given source
+     * @throws ParserException if source does not correspond the expression grammar
+     */
+    public CallChain parse(final String source) throws ParserException, NumberFormatException {
+        try {
+            return new InnerParser(new StringSource(source)).parseChain();
+        } catch (NumberFormatException e) {
+            throw new SyntaxException("wrong number format: " + e.getMessage());
+        }
     }
 
+    /**
+     * An object that applies action to two Polynomials and returns its result
+     */
     public interface PolynomialAction {
+        /**
+         * Apply action to given Polynomials and returns its result
+         * @param a left operand
+         * @param b right operand
+         * @return result of operation
+         */
         Polynomial apply(Polynomial a, Polynomial b);
     }
 
+    /**
+     * Maps characters that represent arithmetical actions to those actions
+     */
     public final static Map<Character, PolynomialAction> POLY_ACTION = Map.of(
             '+', Polynomial::add,
             '-', Polynomial::subtract,
             '*', Polynomial::multiply
     );
 
+    /**
+     * An object that creates new ComparativeExpression from given Polynomial
+     */
     public interface ComparativeExpressionCreator {
+        /**
+         * Create new ComparativeExpression from given Polynomial
+         * @param a Polynomial to create CommonExpression from
+         * @return new ComparativeExpression
+         */
         ComparativeExpression create(Polynomial a);
     }
 
+    /**
+     * Maps characters that represent comparative operators to their creators
+     */
     public final static Map<Character, ComparativeExpressionCreator> COMP_EXPR = Map.of(
             '<', Less::new,
             '>', Greater::new,
             '=', Equals::new
     );
 
+    /**
+     * An object that creates new LogicalExpression from two given BooleanExpressions
+     */
     public interface LogicalExpressionCreator {
+        /**
+         * Create new LogicalExpression from two given Boolean expression
+         * @param left left operand of LogicalExpression
+         * @param right right operand of LogicalExpression
+         * @return new LogicalExpression
+         */
         LogicalExpression create(BooleanExpression left, BooleanExpression right);
     }
 
+    /**
+     * Maps characters that represent logical operators to their creators
+     */
     public final static Map<Character, LogicalExpressionCreator> LOGIC_EXPR = Map.of(
             '&', And::new,
             '|', Or::new

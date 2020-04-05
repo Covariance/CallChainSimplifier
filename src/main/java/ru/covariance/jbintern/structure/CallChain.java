@@ -4,13 +4,25 @@ import java.util.ArrayDeque;
 import java.util.List;
 import java.util.Queue;
 
+/**
+ * Object that represents chain of calls applicable to Integer list
+ */
 public final class CallChain {
     private List<Chainable> chain;
 
+    /**
+     * Constructs new CallChain with given list of calls
+     * @param chain given list of calls
+     */
     public CallChain(List<Chainable> chain) {
         this.chain = chain;
     }
 
+    /**
+     * Applies call chain to given Integer list
+     * @param array Integer list to apply CallChain to
+     * @return Result of appliance
+     */
     public List<Integer> apply(List<Integer> array) {
         for (Chainable call : chain) {
             array = call.apply(array);
@@ -43,10 +55,18 @@ public final class CallChain {
         return List.of(finalFilter, finalMapper);
     }
 
+    /**
+     * Functions that simplifies this CallChain to be in its simple form
+     */
     public void simplify() {
         this.chain = reduce();
     }
 
+    /**
+     * Returns true only if this CallChain is in its simple form, which means
+     * it consists only of two calls, first of which is Filter and second is Map
+     * @return true only if this CallChain is in its simple form
+     */
     public boolean isSimple() {
         return chain.size() == 2 && chain.get(0) instanceof Filter && chain.get(1) instanceof Mapper;
     }
@@ -68,6 +88,10 @@ public final class CallChain {
         return result.toString();
     }
 
+    /**
+     * Returns minimal string representation of this CallChain
+     * @return minimal string representation of this CallChain
+     */
     public String toMiniString() {
         return getStringFromMethod(Chainable::toMiniString);
     }
