@@ -22,7 +22,12 @@ public abstract class ComparativeExpression implements BooleanExpression {
     }
 
     @Override
+    public String toMiniString() {
+        return "(" + poly.toMiniString() + getSign() + "0)";
+    }
+
+    @Override
     public String toString() {
-        return "(" + poly.toString() + getSign() + "0" + ")";
+        return "(" + poly.toString() + getSign() + "0)";
     }
 }

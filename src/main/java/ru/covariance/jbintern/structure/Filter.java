@@ -48,7 +48,7 @@ public final class Filter implements Chainable {
 
     @Override
     public String toMiniString() {
-        return toString();
+        return "filter{" + filter.toMiniString() + "}";
     }
 
     @Override

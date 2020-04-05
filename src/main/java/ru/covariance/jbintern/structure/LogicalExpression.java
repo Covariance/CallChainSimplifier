@@ -25,6 +25,11 @@ public abstract class LogicalExpression implements BooleanExpression {
     }
 
     @Override
+    public String toMiniString() {
+        return "(" + left.toMiniString() + getSign() + right.toMiniString() + ")";
+    }
+
+    @Override
     public String toString() {
         return "(" + left.toString() + getSign() + right.toString() + ")";
     }
